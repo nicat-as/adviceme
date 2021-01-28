@@ -1,0 +1,67 @@
+databaseChangeLog:
+  - changeSet:
+      id: "create user table"
+      author: "Nicat Asgerzade"
+      changes:
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sub_type
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: varchar(80)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(320)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: alias
+                  type: varchar(50)
+              - column:
+                  name: password
+                  type: varchar(256)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: is_anonymous
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+

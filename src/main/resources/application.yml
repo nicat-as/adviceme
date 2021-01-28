@@ -1,1 +1,21 @@
+spring:
+  application:
+    name: equso
 
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yaml
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/add_it
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    generate-ddl: false
+    database: postgresql
+
+
+logging:
+  level:
+    com.uniso.equso: debug
