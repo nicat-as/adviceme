@@ -1,5 +1,5 @@
 package com.uniso.equso.dao.enums;
 
 public enum Status {
-    ACTIVE, DEACTIVE;
+    CREATED, ACTIVE, EXPIRED, DORMANT, BLOCKED, DEACTIVE;
 }
