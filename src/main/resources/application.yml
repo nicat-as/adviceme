@@ -13,9 +13,14 @@ spring:
 
   jpa:
     generate-ddl: false
-    database: postgresql
 
 
 logging:
   level:
     com.uniso.equso: debug
+
+jwt:
+  secret: "Baovk7Gxr8YpVvrS9SKD"
+
+url:
+  root: /api/v1/
