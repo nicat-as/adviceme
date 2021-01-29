@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TokenScheduler {
 
-    @Scheduled(cron = "0 30 * * * *")
+    @Scheduled(cron = "0 */30 * * * *")
     public void removeCache() {
         TokenService.getTokenCache()
                 .values()
