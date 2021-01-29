@@ -3,12 +3,14 @@ package com.uniso.equso.controller;
 import com.uniso.equso.model.CreateUserRequest;
 import com.uniso.equso.model.UserDto;
 import com.uniso.equso.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${url.root}")
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -19,7 +21,9 @@ public class UserController {
 
     @PostMapping("sign-up")
     public ResponseEntity<Void> createUser(@RequestBody CreateUserRequest request) {
+        log.info("ActionLog.createUser.started");
         userService.addUser(request);
+        log.info("ActionLog.createUser.ended");
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
