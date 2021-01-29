@@ -18,6 +18,8 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+    // Swagger url example: http://localhost:8081/swagger-ui/
+
     private static final String JWT = "JWT";
     private static final String AUTH = "Authorization";
     private static final String HEADER = "header";
