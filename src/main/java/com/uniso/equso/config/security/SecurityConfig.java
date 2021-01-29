@@ -67,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    @Profile("!default")
+    @Profile("dev")
     public PasswordEncoder getEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
