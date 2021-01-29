@@ -9,6 +9,7 @@ import com.uniso.equso.model.CreateUserRequest;
 import com.uniso.equso.model.UserDto;
 import com.uniso.equso.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -18,9 +19,11 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserEntityRepository userEntityRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserEntityRepository userEntityRepository) {
+    public UserServiceImpl(UserEntityRepository userEntityRepository, PasswordEncoder passwordEncoder) {
         this.userEntityRepository = userEntityRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class UserServiceImpl implements UserService {
                 .email(userRequest.getEmail())
                 .alias(UUID.randomUUID().toString())
                 .isAnonymous(false)
-                .password(userRequest.getPassword())
+                .password(passwordEncoder.encode(userRequest.getPassword()))
                 .type(UserType.USER)
                 .subType(UserSubType.DEFAULT)
                 .status(Status.ACTIVE)
