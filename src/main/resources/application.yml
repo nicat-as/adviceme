@@ -6,9 +6,9 @@ spring:
     change-log: classpath:liquibase/changelog-master.yaml
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/add_it
-    username: postgres
-    password: 123456
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -20,7 +20,7 @@ logging:
     com.uniso.equso: debug
 
 jwt:
-  secret: "Baovk7Gxr8YpVvrS9SKD"
+  secret: ${JWT_SECRET}
 
 url:
   root: /api/v1/
