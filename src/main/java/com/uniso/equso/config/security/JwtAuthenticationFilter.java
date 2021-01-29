@@ -5,6 +5,7 @@ import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uniso.equso.model.LoginRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -91,6 +92,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             var mapper = new ObjectMapper();
             var result = mapper.writeValueAsString(Map.of(TOKEN, token));
             response.getOutputStream().println(result);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         } catch (IOException e) {
             log.error("Exception.io:", e);
         }
