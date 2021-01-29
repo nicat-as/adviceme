@@ -5,17 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
 public class TokenService {
 
-    private static final ConcurrentHashMap<Long, List<String>> tokenCache = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Long, CopyOnWriteArrayList<String>> tokenCache = new ConcurrentHashMap<>();
 
     public static void addToken(Long userId, String token) {
         log.info("ActionLog.addToken.start");
         var cacheList = tokenCache.get(userId);
         if (cacheList == null || cacheList.isEmpty()) {
-            tokenCache.put(userId, List.of(token));
+            tokenCache.put(userId, new CopyOnWriteArrayList<>(List.of(token)));
         } else {
             log.debug("Get cache list :{}", cacheList.size());
             cacheList.add(token);
@@ -35,5 +36,18 @@ public class TokenService {
         }
         log.info("ActionLog.validateToken.end");
         return isValid;
+    }
+
+    public static ConcurrentHashMap<Long, CopyOnWriteArrayList<String>> getTokenCache() {
+        return tokenCache;
+    }
+
+    public static boolean remove(Long userId, String token) {
+        return tokenCache.get(userId)
+                .remove(token);
+    }
+
+    public static void removeUsers(List<Long> userList){
+        userList.forEach(tokenCache::remove);
     }
 }
