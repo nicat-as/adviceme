@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("user/profile")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> getUser() {
         var user = (CustomUserDetails) authenticationUtil.getContext().getPrincipal();
         return ResponseEntity.ok(userService.getUserById(user.getUserEntity().getId()));
     }
