@@ -14,6 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Configuration
 @EnableSwagger2
@@ -34,6 +35,7 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
+                .paths(Predicate.not(PathSelectors.regex("/error.*")))
                 .build();
     }
 
