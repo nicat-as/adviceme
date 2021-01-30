@@ -9,7 +9,6 @@ import com.uniso.equso.service.AuthService;
 import com.uniso.equso.service.TokenService;
 import com.uniso.equso.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
