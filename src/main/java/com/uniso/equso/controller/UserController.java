@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("${url.root}")
+@RequestMapping("${url.root}/user")
 @Slf4j
 public class UserController {
     private final UserService userService;
@@ -22,7 +22,7 @@ public class UserController {
         this.authenticationUtil = authenticationUtil;
     }
 
-    @GetMapping("user/profile")
+    @GetMapping("profile")
     public ResponseEntity<UserDto> getUserProfile() {
         var user = getUserDetail();
         return ResponseEntity.ok(userService.getUserById(user.getUserEntity().getId()));
