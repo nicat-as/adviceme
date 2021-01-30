@@ -1,12 +1,9 @@
 package com.uniso.equso.config.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.uniso.equso.dao.entities.UserEntity;
-import com.uniso.equso.service.impl.TokenService;
+import com.uniso.equso.service.TokenService;
+import com.uniso.equso.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,10 +23,12 @@ import static com.uniso.equso.config.security.SecurityConstant.TOKEN_PREFIX;
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    private final String secret;
+    private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
 
-    public JwtAuthorizationFilter(@Value("${jwt.secret}") String secret) {
-        this.secret = secret;
+    public JwtAuthorizationFilter(JwtUtil jwtUtil, TokenService tokenService) {
+        this.jwtUtil = jwtUtil;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -60,27 +59,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String token = request.getHeader(HEADER_STRING);
         UsernamePasswordAuthenticationToken authenticationToken = null;
-        if (token != null) {
-            try {
-                var decodedJWT = JWT.require(Algorithm.HMAC512(secret.getBytes()))
-                        .build()
-                        .verify(token.replace(TOKEN_PREFIX, ""));
-                var user = CustomUserDetails.builder()
-                        .userEntity(UserEntity.builder()
-                                .id(decodedJWT.getClaim("id").asLong())
-                                .email(decodedJWT.getSubject())
-                                .build())
-                        .build();
-
-                if (user != null && TokenService.validateToken(user.getUserEntity().getId(), decodedJWT.getToken())) {
+        try {
+            if (token != null) {
+                var replacedToken = token.replace(TOKEN_PREFIX, "");
+                var user = jwtUtil.validateToken(replacedToken);
+                if (user != null && tokenService.validateToken(user.getUserEntity().getId(), replacedToken)) {
                     authenticationToken = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
                 }
-            } catch (JWTVerificationException e) {
-                log.error("exception.jwt-verification-failed", e);
-                throw e;
             }
+        } catch (JWTVerificationException e) {
+            log.error("exception.jwt-verification-failed", e);
+            throw e;
         }
-        log.info("ActionLog.getAuthentication.started");
+        log.info("ActionLog.getAuthentication.ended");
         return authenticationToken;
     }
 }
