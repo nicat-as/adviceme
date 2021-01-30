@@ -24,7 +24,6 @@ import static com.uniso.equso.controller.AuthController.SIGN_UP;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private static final String SIGN_UP = "sign-up";
 
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
@@ -61,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers(HttpMethod.POST, rootUrl + SIGN_UP).permitAll()
+                .antMatchers(HttpMethod.POST, rootUrl + SIGN_UP, rootUrl + LOGIN).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
