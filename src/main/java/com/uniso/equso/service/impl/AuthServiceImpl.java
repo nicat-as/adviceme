@@ -9,7 +9,6 @@ import com.uniso.equso.service.AuthService;
 import com.uniso.equso.service.TokenService;
 import com.uniso.equso.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -46,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
             response = jwtUtil.generateToken(userDetails.getUserEntity());
         } catch (UsernameNotFoundException e) {
             log.error("exception.username-not-found", e);
-            throw new AuthenticationException("exception.username-not-found");
+            throw new AuthenticationException("exception.authentication.username-not-found");
         }
         log.info("ActionLog.authenticate.ended");
         return response;
