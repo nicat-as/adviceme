@@ -7,7 +7,6 @@ import com.uniso.equso.util.AuthenticationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,8 +23,12 @@ public class UserController {
     }
 
     @GetMapping("user/profile")
-    public ResponseEntity<UserDto> getUser() {
-        var user = (CustomUserDetails) authenticationUtil.getContext().getPrincipal();
+    public ResponseEntity<UserDto> getUserProfile() {
+        var user = getUserDetail();
         return ResponseEntity.ok(userService.getUserById(user.getUserEntity().getId()));
+    }
+
+    private CustomUserDetails getUserDetail() {
+        return (CustomUserDetails) authenticationUtil.getContext().getPrincipal();
     }
 }
