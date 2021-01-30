@@ -6,10 +6,11 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.uniso.equso.dao.entities.UserEntity;
 import com.uniso.equso.service.impl.TokenService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,13 +23,12 @@ import static com.uniso.equso.config.security.SecurityConstant.HEADER_STRING;
 import static com.uniso.equso.config.security.SecurityConstant.TOKEN_PREFIX;
 
 @Slf4j
-public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+@Component
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final String secret;
 
-
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, String secret) {
-        super(authenticationManager);
+    public JwtAuthorizationFilter(@Value("${jwt.secret}") String secret) {
         this.secret = secret;
     }
 
@@ -65,7 +65,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 var decodedJWT = JWT.require(Algorithm.HMAC512(secret.getBytes()))
                         .build()
                         .verify(token.replace(TOKEN_PREFIX, ""));
-                var user = UserDetail.builder()
+                var user = CustomUserDetails.builder()
                         .userEntity(UserEntity.builder()
                                 .id(decodedJWT.getClaim("id").asLong())
                                 .email(decodedJWT.getSubject())

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class UserDetail implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private UserEntity userEntity;
 

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,9 +13,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import static com.uniso.equso.controller.AuthController.LOGIN;
+import static com.uniso.equso.controller.AuthController.SIGN_UP;
 
 @Configuration
 @EnableWebSecurity
@@ -35,30 +41,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // other public endpoints of your API may be appended to this array
     };
 
-    private final UserDetailService userDetailService;
-    private final String secret;
+    private final CustomUserDetailsService customUserDetailsService;
     private final String rootUrl;
+    private final JwtAuthorizationFilter authorizationFilter;
 
-    public SecurityConfig(UserDetailService userDetailService,
-                          @Value("${jwt.secret}") String secret,
-                          @Value("${url.root}") String rootUrl) {
-        this.userDetailService = userDetailService;
-        this.secret = secret;
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService,
+                          @Value("${url.root}") String rootUrl, JwtAuthorizationFilter authorizationFilter) {
+        this.customUserDetailsService = customUserDetailsService;
         this.rootUrl = rootUrl;
+        this.authorizationFilter = authorizationFilter;
     }
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        http.cors().and()
+                .csrf().disable()
                 .logout().disable()
+                .formLogin().disable()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.POST, rootUrl + SIGN_UP).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), secret))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), secret))
+                .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
@@ -69,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailService).passwordEncoder(getEncoder());
+        auth.userDetailsService(customUserDetailsService).passwordEncoder(getEncoder());
     }
 
     @Bean
@@ -79,5 +85,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
 }
