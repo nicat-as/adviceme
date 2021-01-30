@@ -1,6 +1,7 @@
 package com.uniso.equso.controller;
 
 import com.uniso.equso.config.security.SecurityConstant;
+import com.uniso.equso.exceptions.AuthenticationException;
 import com.uniso.equso.model.CreateUserRequest;
 import com.uniso.equso.model.JwtResponse;
 import com.uniso.equso.model.LoginRequest;
@@ -51,7 +52,7 @@ public class AuthController {
         log.info("ActionLog.logout.started");
         var token = Optional.of(request.getHeader(SecurityConstant.HEADER_STRING))
                 .orElseThrow(() -> {
-                    throw new RuntimeException("exception.header-not-found");
+                    throw new AuthenticationException("exception.authentication.header-not-found");
                 });
         authService.logout(token);
         log.info("ActionLog.logout.ended");

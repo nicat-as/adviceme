@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
             response = jwtUtil.generateToken(userDetails.getUserEntity());
         } catch (UsernameNotFoundException e) {
             log.error("exception.username-not-found", e);
-            throw new AuthenticationException("exception.username-not-found");
+            throw new AuthenticationException("exception.authentication.username-not-found");
         }
         log.info("ActionLog.authenticate.ended");
         return response;
