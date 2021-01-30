@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      id: "create post table"
+      author: "Kamran Samadov"
+      changes:
+        - createTable:
+            tableName: post
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: text
+                  type: clob
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creator_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: wall_user_id
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: post_category_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: "create post category table"
+      author: "Kamran Samadov"
+      changes:
+        - createTable:
+            tableName: post_categories
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: text
+                  type: clob
+                  constraints:
+                    nullable: false
+  - changeSet:
+    id: addForeignKeyConstraint-example
+    author: liquibase-docs
+    changes:
+      - addForeignKeyConstraint:
+          baseColumnNames: post_category_id
+          baseTableCatalogName: cat
+          baseTableName: post
+          baseTableSchemaName: public
+          constraintName: fk_category
+          deferrable: true
+          initiallyDeferred: true
+          onDelete: CASCADE
+          onUpdate: RESTRICT
+          referencedColumnNames: id
+          referencedTableName: post_categories
+          referencedTableSchemaName: public
+          validate: true
