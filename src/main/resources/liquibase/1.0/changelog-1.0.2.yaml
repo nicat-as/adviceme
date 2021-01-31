@@ -27,8 +27,6 @@ databaseChangeLog:
               - column:
                   name: wall_user_id
                   type: bigint
-                  constraints:
-                    nullable: false
               - column:
                   name: post_category_id
                   type: bigint
