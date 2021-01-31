@@ -1,0 +1,32 @@
+image: openjdk:11
+
+stages:
+  - build
+  - deploy
+
+before_script:
+  - chmod +x gradlew
+
+build:
+  stage: build
+  script: ./gradlew clean build
+  artifacts:
+    paths:
+      - libs/*.jar
+
+production:
+  image: ruby:latest
+  only:
+    - master
+  stage: deploy
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_APP_KEY
+    - export HEROKU_APP_KEY=$HEROKU_APP_KEY
+    - heroku run --app $HEROKU_APP_NAME migrate
+  environment:
+    name: production
+    url: $HEROKU_APP_URL

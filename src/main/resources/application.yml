@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: dev
   application:
     name: equso
 
@@ -8,7 +6,7 @@ spring:
     change-log: classpath:liquibase/changelog-master.yaml
 
   datasource:
-    url: ${DB_URL}
+    url: ${DATABASE_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: ${DB_DRIVER}
