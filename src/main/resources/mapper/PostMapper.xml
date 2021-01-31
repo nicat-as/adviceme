@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uniso.equso.dao.repository.mapper.PostMapper">
+
+ <insert id="createPost">
+     insert into post(text,creator_id,wall_user_id,post_category_id)
+     values(#{request.text},#{userId},#{request.wallUserId},#{request.categoryId})
+ </insert>
+
+    <select id="getPostById" resultMap="getPostById">
+        select
+               p.id as ID,
+               p.text as TEXT,
+               p.creator_id as CREATOR_ID,
+               p.wall_user_id as WALL_USER_ID,
+               c.id as CATEGORY_ID,
+               c.text as CATEGORY_NAME
+        from post p
+            join post_categories c on c.id = p.post_category_id
+        where id = #{postId} and creator_id = #{userId}
+    </select>
+
+    <resultMap id="getPostById" type="com.uniso.equso.model.PostDto">
+        <result column="ID" property="id"/>
+        <result column="TEXT" property="text"/>
+        <result column="CREATOR_ID" property="creatorId"/>
+        <result column="WALL_USER_ID" property="wallUserId"/>
+        <result column="CATEGORY_ID" property="category.id"/>
+        <result column="CATEGORY_NAME" property="category.name"/>
+    </resultMap>
+
+</mapper>

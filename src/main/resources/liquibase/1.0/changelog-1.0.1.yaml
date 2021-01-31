@@ -71,4 +71,3 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
-

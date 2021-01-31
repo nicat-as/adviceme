@@ -26,3 +26,6 @@ jwt:
 
 url:
   root: /api/v1/
+
+mybatis:
+  mapper-locations: mapper/*.xml
