@@ -7,7 +7,7 @@
      values(#{request.text},#{userId},#{request.wallUserId},#{request.categoryId})
  </insert>
 
-    <select id="getPostById" resultMap="getPostById">
+    <select id="getPostById" resultMap="post">
         select
                p.id as ID,
                p.text as TEXT,
@@ -17,10 +17,10 @@
                c.text as CATEGORY_NAME
         from post p
             join post_categories c on c.id = p.post_category_id
-        where id = #{postId} and creator_id = #{userId}
+        where p.id = #{postId} and p.creator_id = #{userId}
     </select>
 
-    <resultMap id="getPostById" type="com.uniso.equso.model.PostDto">
+    <resultMap id="post" type="com.uniso.equso.model.PostDto">
         <result column="ID" property="id"/>
         <result column="TEXT" property="text"/>
         <result column="CREATOR_ID" property="creatorId"/>
@@ -28,5 +28,37 @@
         <result column="CATEGORY_ID" property="category.id"/>
         <result column="CATEGORY_NAME" property="category.name"/>
     </resultMap>
-
+<!--Long userId, GetPostsRequest criteria-->
+    <select id="getPostsByCriteria" resultMap="post">
+        select
+            p.id as ID,
+            p.text as TEXT,
+            p.creator_id as CREATOR_ID,
+            p.wall_user_id as WALL_USER_ID,
+            c.id as CATEGORY_ID,
+            c.text as CATEGORY_NAME
+        from post p
+                 join post_categories c on c.id = p.post_category_id
+                 left join "user" wu on wu.id = p.wall_user_id
+        where p.creator_id = #{userId}
+              <if test="!(criteria.text == null or criteria.text.isEmpty())">
+                  and p.text ilike p.text ilike '%'|| #{criteria.text} || '%'
+              </if>
+              <if test="!(criteria.categoryName == null or criteria.categoryName.isEmpty())">
+                and c.text ilike '%'|| #{criteria.wallUserId} || '%'
+              </if>
+              <if test="!(criteria.wallUserId == null)">
+                and c.text ilike '%'|| #{criteria.wallUserId} || '%'
+              </if>
+              limit
+              <choose>
+                <when test="criteria.maxCount == null or isZero">10</when>
+                  <otherwise>${criteria.maxCount}</otherwise>
+              </choose>
+              offset
+            <choose>
+                <when test="criteria.page == null  or criteria.page == 0 ">0</when>
+                <otherwise>${criteria.page}</otherwise>
+            </choose>
+    </select>
 </mapper>
