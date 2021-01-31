@@ -24,6 +24,6 @@ public class CreateUserRequest {
     private String email;
 
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$",
-            message = "Password is not well-formed")
+            message = "password is not well-formed")
     private String password;
 }

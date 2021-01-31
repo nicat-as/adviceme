@@ -61,6 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.POST, rootUrl + SIGN_UP, rootUrl + LOGIN).permitAll()
+                .antMatchers(HttpMethod.GET,rootUrl + "user/email").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
