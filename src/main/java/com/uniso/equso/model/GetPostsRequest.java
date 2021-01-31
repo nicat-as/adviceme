@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class GetPostsRequest {
-//    private SortBy sortBy;
-//    private Order orderBy;
+    private SortBy sortBy;
+    private Order orderBy;
     private String text;
     private String categoryName;
     private Long wallUserId;
