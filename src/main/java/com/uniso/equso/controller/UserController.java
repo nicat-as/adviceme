@@ -24,11 +24,9 @@ public class UserController {
 
     @GetMapping("user/profile")
     public ResponseEntity<UserDto> getUserProfile() {
-        var user = getUserDetail();
+        var user = authenticationUtil.getUserDetail();
         return ResponseEntity.ok(userService.getUserById(user.getUserEntity().getId()));
     }
 
-    private CustomUserDetails getUserDetail() {
-        return (CustomUserDetails) authenticationUtil.getContext().getPrincipal();
-    }
+
 }

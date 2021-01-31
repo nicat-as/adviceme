@@ -1,0 +1,22 @@
+FROM openjdk:11
+
+EXPOSE 8080
+
+COPY . /project
+
+RUN bash -c "apt-get update \
+    && apt-get install -y curl \
+    && apt-get install -y rename \
+    && apt-get install -y zip unzip \
+    && curl -s http://get.sdkman.io | bash \
+    &&  source $HOME/.sdkman/bin/sdkman-init.sh \
+    && sdk install gradle 6.7\
+    && cd /project \
+    && gradle clean build"
+
+COPY /build/libs/*.jar /app/equso.jar
+
+RUN rm -r /project
+
+ENTRYPOINT ["java","-jar","/app/equso.jar","--spring.profiles.active=default"]
+
