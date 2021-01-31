@@ -5,10 +5,14 @@ import com.uniso.equso.exceptions.PostException;
 import com.uniso.equso.model.RestErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RestControllerAdvice
@@ -48,6 +52,25 @@ public class ErrorHandler {
                 .code(e.getCode())
                 .message(e.getMessage())
                 .status(HttpStatus.BAD_REQUEST.name())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public RestErrorResponse handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return RestErrorResponse.builder()
+                .uuid(UUID.randomUUID().toString())
+                .code("exception.validation-failed")
+                .message("Validation failed")
+                .status(HttpStatus.BAD_REQUEST.name())
+                .error(errors)
                 .build();
     }
 }
