@@ -1,6 +1,7 @@
 package com.uniso.equso.controller;
 
 import com.uniso.equso.exceptions.AuthenticationException;
+import com.uniso.equso.exceptions.AuthorizationException;
 import com.uniso.equso.exceptions.PostException;
 import com.uniso.equso.model.RestErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
-    public RestErrorResponse handleAuthenticationException(AuthenticationException e) {
+    public RestErrorResponse<?> handleAuthenticationException(AuthenticationException e) {
         log.error("exception.handleAuthenticationException", e);
         return RestErrorResponse.builder()
                 .uuid(e.getUuid())
@@ -32,7 +33,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    public RestErrorResponse handleUnknownException(Exception e) {
+    public RestErrorResponse<?> handleUnknownException(Exception e) {
         log.error("exception.handleUnknownException", e);
         return RestErrorResponse.builder()
                 .uuid(UUID.randomUUID().toString())
@@ -44,7 +45,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(PostException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public RestErrorResponse handlePostException(PostException e) {
+    public RestErrorResponse<?> handlePostException(PostException e) {
         log.error("exception.handlePostException", e);
         return RestErrorResponse.builder()
                 .uuid(e.getUuid())
@@ -56,7 +57,7 @@ public class ErrorHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public RestErrorResponse handleValidationExceptions(
+    public RestErrorResponse<?> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -75,7 +76,7 @@ public class ErrorHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    public RestErrorResponse handleValidationExceptions(ConstraintViolationException ex) {
+    public RestErrorResponse<?> handleValidationExceptions(ConstraintViolationException ex) {
         Set<String> errors = new HashSet<>();
         ex.getConstraintViolations()
                 .forEach(constraintViolation -> errors.add(constraintViolation.getMessage()));
@@ -85,6 +86,18 @@ public class ErrorHandler {
                 .message(ex.getMessage())
                 .status(HttpStatus.BAD_REQUEST.name())
                 .error(errors)
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AuthorizationException.class)
+    public RestErrorResponse<?> handleAuthorizationExceptions(AuthorizationException e){
+        log.debug("Authorization exception handling");
+        return RestErrorResponse.builder()
+                .uuid(e.getUuid())
+                .code(e.getCode())
+                .message(e.getMessage())
+                .status(HttpStatus.FORBIDDEN.name())
                 .build();
     }
 }
