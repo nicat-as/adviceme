@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import javax.validation.ConstraintViolationException;
+import java.util.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -22,7 +21,7 @@ public class ErrorHandler {
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public RestErrorResponse handleAuthenticationException(AuthenticationException e) {
-        log.error("exception.handleAuthenticationException",e);
+        log.error("exception.handleAuthenticationException", e);
         return RestErrorResponse.builder()
                 .uuid(e.getUuid())
                 .code(e.getCode())
@@ -32,9 +31,9 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(code =HttpStatus.INTERNAL_SERVER_ERROR)
-    public RestErrorResponse handleUnknownException(Exception e){
-        log.error("exception.handleUnknownException",e);
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    public RestErrorResponse handleUnknownException(Exception e) {
+        log.error("exception.handleUnknownException", e);
         return RestErrorResponse.builder()
                 .uuid(UUID.randomUUID().toString())
                 .code("exception.unknown")
@@ -45,8 +44,8 @@ public class ErrorHandler {
 
     @ExceptionHandler(PostException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public RestErrorResponse handlePostException(PostException e){
-        log.error("exception.handlePostException",e);
+    public RestErrorResponse handlePostException(PostException e) {
+        log.error("exception.handlePostException", e);
         return RestErrorResponse.builder()
                 .uuid(e.getUuid())
                 .code(e.getCode())
@@ -69,6 +68,21 @@ public class ErrorHandler {
                 .uuid(UUID.randomUUID().toString())
                 .code("exception.validation-failed")
                 .message("Validation failed")
+                .status(HttpStatus.BAD_REQUEST.name())
+                .error(errors)
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public RestErrorResponse handleValidationExceptions(ConstraintViolationException ex) {
+        Set<String> errors = new HashSet<>();
+        ex.getConstraintViolations()
+                .forEach(constraintViolation -> errors.add(constraintViolation.getMessage()));
+        return RestErrorResponse.builder()
+                .uuid(UUID.randomUUID().toString())
+                .code("exception.validation-failed")
+                .message(ex.getMessage())
                 .status(HttpStatus.BAD_REQUEST.name())
                 .error(errors)
                 .build();

@@ -13,10 +13,10 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RestErrorResponse {
+public class RestErrorResponse<T> {
     private String uuid;
     private String code;
     private String message;
     private String status;
-    private Map<String, String> error;
+    private T error;
 }
