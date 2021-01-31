@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class PostDto {
     private Long id;
     private String text;
-    private Long creatorId;
-    private Long wallUserId;
+    private UserInfoDto creator;
+    private UserInfoDto wallUser;
     private PostCategoryDto category;
 }

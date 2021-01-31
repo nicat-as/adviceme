@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void createPost(CreatePostRequest request) {
-
+        var userId = getUserId();
+        validateAndFillWallUser(request,userId);
         if(postMapper.createPost(getUserId(),request) <= 0){
             log.error("POST NOT CREATED");
             throw new PostException("exception.post-not-created");
@@ -44,10 +46,10 @@ public class PostServiceImpl implements PostService {
         Integer maxCount = criteria.getMaxCount();
         boolean isZero = maxCount == 0;
         boolean hasMore = false;
-        criteria.setPage((criteria.getPage()-1) * criteria.getMaxCount()); //0
-        criteria.setMaxCount(maxCount + 1); // 1
+        criteria.setPage((criteria.getPage()-1) * (isZero?10:criteria.getMaxCount()));
+        criteria.setMaxCount(maxCount + 1);
         List<PostDto> postDtoList =  postMapper.getPostsByCriteria(getUserId(),criteria,isZero);
-        if(postDtoList.size() - 1 == maxCount && maxCount >= 0){
+        if(postDtoList.size() - 1 == maxCount && !isZero){
            hasMore = true;
             postDtoList.remove(postDtoList.size() -1);
         }
@@ -59,5 +61,11 @@ public class PostServiceImpl implements PostService {
 
     private Long getUserId(){
         return authenticationUtil.getUserDetail().getUserEntity().getId();
+    }
+
+    private void validateAndFillWallUser(CreatePostRequest request,Long userId) {
+        if(request.getWallUserId() == null){
+            request.setWallUserId(userId);
+        }
     }
 }
