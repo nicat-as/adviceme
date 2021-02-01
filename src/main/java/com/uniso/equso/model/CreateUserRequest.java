@@ -35,7 +35,7 @@ public class CreateUserRequest {
     @NotNull
     private UserSubType subType;
 
-    @Max(value = 400)
+    @Size(max = 400)
     private String about;
 
     private Boolean isAnonymous = false;

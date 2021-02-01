@@ -4,6 +4,7 @@ import com.uniso.equso.dao.entities.UserEntity;
 import com.uniso.equso.dao.enums.Status;
 import com.uniso.equso.dao.repository.UserEntityRepository;
 import com.uniso.equso.exceptions.AuthenticationException;
+import com.uniso.equso.exceptions.UserException;
 import com.uniso.equso.model.CheckEmailResponse;
 import com.uniso.equso.model.CreateUserRequest;
 import com.uniso.equso.model.UserDto;
@@ -11,8 +12,6 @@ import com.uniso.equso.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -38,11 +37,12 @@ public class UserServiceImpl implements UserService {
                 .name(userRequest.getName())
                 .surname(userRequest.getSurname())
                 .email(userRequest.getEmail())
-                .alias(UUID.randomUUID().toString())
+                .alias(buildAlias(userRequest.getName(), userRequest.getSurname()))
                 .isAnonymous(userRequest.getIsAnonymous())
                 .password(passwordEncoder.encode(userRequest.getPassword()))
                 .type(userRequest.getType())
                 .subType(userRequest.getSubType())
+                .about(userRequest.getAbout())
                 .status(Status.ACTIVE)
                 .build();
 
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
         var user = userEntityRepository.findById(userId)
                 .orElseThrow(() -> {
-                    throw new RuntimeException("exception.user-not-found");
+                    throw new UserException("exception.user-not-found");
                 });
 
         log.info("ActionLog.getUserById.ended - user:{}", userId);
@@ -78,5 +78,12 @@ public class UserServiceImpl implements UserService {
         return CheckEmailResponse.builder()
                 .isValid(!isExist)
                 .build();
+    }
+
+    private String buildAlias(String name, String surname) {
+        return String.valueOf(new char[]{
+                name.toUpperCase().charAt(0),
+                surname.toUpperCase().charAt(0)
+        });
     }
 }
