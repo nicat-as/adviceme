@@ -2,8 +2,6 @@ package com.uniso.equso.service.impl;
 
 import com.uniso.equso.dao.entities.UserEntity;
 import com.uniso.equso.dao.enums.Status;
-import com.uniso.equso.dao.enums.UserSubType;
-import com.uniso.equso.dao.enums.UserType;
 import com.uniso.equso.dao.repository.UserEntityRepository;
 import com.uniso.equso.exceptions.AuthenticationException;
 import com.uniso.equso.model.CheckEmailResponse;
@@ -32,7 +30,7 @@ public class UserServiceImpl implements UserService {
     public void addUser(CreateUserRequest userRequest) {
         log.info("ActionLog.addUser.started - user:{}", userRequest.getEmail());
 
-        if (!isValidEmail(userRequest.getEmail()).getIsValid()){
+        if (!isValidEmail(userRequest.getEmail()).getIsValid()) {
             throw new AuthenticationException("exception.email-is-not-valid");
         }
 
@@ -41,10 +39,10 @@ public class UserServiceImpl implements UserService {
                 .surname(userRequest.getSurname())
                 .email(userRequest.getEmail())
                 .alias(UUID.randomUUID().toString())
-                .isAnonymous(false)
+                .isAnonymous(userRequest.getIsAnonymous())
                 .password(passwordEncoder.encode(userRequest.getPassword()))
-                .type(UserType.USER)
-                .subType(UserSubType.DEFAULT)
+                .type(userRequest.getType())
+                .subType(userRequest.getSubType())
                 .status(Status.ACTIVE)
                 .build();
 
@@ -70,6 +68,7 @@ public class UserServiceImpl implements UserService {
                 .surname(user.getSurname())
                 .type(user.getType())
                 .subType(user.getSubType())
+                .about(user.getAbout())
                 .build();
     }
 

@@ -95,8 +95,17 @@ public class PostServiceImpl implements PostService {
                         .id(c.getId())
                         .text(c.getText())
                         .creator(UserInfo.builder()
-                                .name(c.getCreator().getName())
-                                .surname(c.getCreator().getSurname())
+                                .id(c.getCreator().getId())
+                                .name(checkAnonymous(c.getCreator().getName(),
+                                        c.getCreator().getAlias(),
+                                        true,
+                                        c.getCreator().getIsAnonymous())
+                                )
+                                .surname(checkAnonymous(c.getCreator().getSurname(),
+                                        c.getCreator().getAlias(),
+                                        false,
+                                        c.getCreator().getIsAnonymous())
+                                )
                                 .email(c.getCreator().getEmail())
                                 .userType(c.getCreator().getType())
                                 .subType(c.getCreator().getSubType())
@@ -123,4 +132,18 @@ public class PostServiceImpl implements PostService {
             request.setWallUserId(userId);
         }
     }
+
+    private String checkAnonymous(String value, String alias, boolean isName, boolean isAnonymous){
+        String result=null;
+        if (isAnonymous){
+            if (isName){
+                result=alias;
+            }
+        }else {
+            result=value;
+        }
+        return result;
+    }
+
+
 }
