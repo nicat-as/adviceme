@@ -1,14 +1,13 @@
 package com.uniso.equso.controller;
 
-import com.uniso.equso.model.CreatePostRequest;
-import com.uniso.equso.model.GetPostsRequest;
-import com.uniso.equso.model.GetPostsResponse;
-import com.uniso.equso.model.PostDto;
+import com.uniso.equso.model.*;
 import com.uniso.equso.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("${url.root}/post")
@@ -36,6 +35,13 @@ public class PostController {
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.deletePostById(postId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("{postId}/comment")
+    public ResponseEntity<PageResponse<?>> getCommentsByPost(@PathVariable Long postId,
+                                                                      @RequestParam("page") Integer page,
+                                                                      @RequestParam("size") Integer size) {
+        return ResponseEntity.ok(postService.getComments(postId, page, size));
     }
 
 }

@@ -1,8 +1,6 @@
 package com.uniso.equso.controller;
 
-import com.uniso.equso.exceptions.AuthenticationException;
-import com.uniso.equso.exceptions.AuthorizationException;
-import com.uniso.equso.exceptions.PostException;
+import com.uniso.equso.exceptions.*;
 import com.uniso.equso.model.RestErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -43,9 +41,9 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler(PostException.class)
+    @ExceptionHandler({PostException.class, CommentException.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public RestErrorResponse<?> handlePostException(PostException e) {
+    public RestErrorResponse<?> handlePostException(BaseException e) {
         log.error("exception.handlePostException", e);
         return RestErrorResponse.builder()
                 .uuid(e.getUuid())
