@@ -45,6 +45,8 @@ public class UserEntity {
     @Column(nullable = false)
     private Boolean isAnonymous;
 
+    private String about;
+
     @CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;

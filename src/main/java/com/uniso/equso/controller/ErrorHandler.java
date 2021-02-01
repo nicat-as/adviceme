@@ -17,6 +17,13 @@ import java.util.*;
 @Slf4j
 public class ErrorHandler {
 
+    private static final Locale locale = Locale.forLanguageTag("az");
+
+    private String getLocalizedMessage(String messageKey) {
+        return ResourceBundle.getBundle("messages", locale)
+                .getString(messageKey);
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public RestErrorResponse<?> handleAuthenticationException(AuthenticationException e) {
@@ -24,7 +31,7 @@ public class ErrorHandler {
         return RestErrorResponse.builder()
                 .uuid(e.getUuid())
                 .code(e.getCode())
-                .message(e.getMessage())
+                .message(getLocalizedMessage(e.getCode()))
                 .status(HttpStatus.FORBIDDEN.name())
                 .build();
     }
@@ -36,7 +43,7 @@ public class ErrorHandler {
         return RestErrorResponse.builder()
                 .uuid(UUID.randomUUID().toString())
                 .code("exception.unknown")
-                .message(e.getMessage())
+                .message(getLocalizedMessage("exception.unknown"))
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
                 .build();
     }
@@ -48,7 +55,7 @@ public class ErrorHandler {
         return RestErrorResponse.builder()
                 .uuid(e.getUuid())
                 .code(e.getCode())
-                .message(e.getMessage())
+                .message(getLocalizedMessage(e.getCode()))
                 .status(HttpStatus.BAD_REQUEST.name())
                 .build();
     }
@@ -66,7 +73,7 @@ public class ErrorHandler {
         return RestErrorResponse.builder()
                 .uuid(UUID.randomUUID().toString())
                 .code("exception.validation-failed")
-                .message("Validation failed")
+                .message(getLocalizedMessage("exception.validation-failed"))
                 .status(HttpStatus.BAD_REQUEST.name())
                 .error(errors)
                 .build();
@@ -81,7 +88,7 @@ public class ErrorHandler {
         return RestErrorResponse.builder()
                 .uuid(UUID.randomUUID().toString())
                 .code("exception.validation-failed")
-                .message(ex.getMessage())
+                .message(getLocalizedMessage("exception.validation-failed"))
                 .status(HttpStatus.BAD_REQUEST.name())
                 .error(errors)
                 .build();
@@ -89,12 +96,12 @@ public class ErrorHandler {
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AuthorizationException.class)
-    public RestErrorResponse<?> handleAuthorizationExceptions(AuthorizationException e){
+    public RestErrorResponse<?> handleAuthorizationExceptions(AuthorizationException e) {
         log.debug("Authorization exception handling");
         return RestErrorResponse.builder()
                 .uuid(e.getUuid())
                 .code(e.getCode())
-                .message(e.getMessage())
+                .message(getLocalizedMessage(e.getCode()))
                 .status(HttpStatus.FORBIDDEN.name())
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.uniso.equso.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.uniso.equso.dao.enums.UserSubType;
 import com.uniso.equso.dao.enums.UserType;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserInfo {
     private Long id;
     private String name;

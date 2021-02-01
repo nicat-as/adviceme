@@ -1,29 +1,43 @@
 package com.uniso.equso.model;
 
+import com.uniso.equso.dao.enums.UserSubType;
+import com.uniso.equso.dao.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@NotNull
 public class CreateUserRequest {
-
+    @NotNull
     private String name;
 
+    @NotNull
     private String surname;
 
+    @NotNull
     @Email
     private String email;
 
+    @NotNull
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$",
-            message = "password is not well-formed")
+            message = "{exception.password-not-standard}")
     private String password;
+
+    @NotNull
+    private UserType type;
+
+    @NotNull
+    private UserSubType subType;
+
+    @Size(max = 400)
+    private String about;
+
+    private Boolean isAnonymous = false;
+
 }

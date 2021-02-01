@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: "add about column to user table"
+      author: "Nicat Asgerzade"
+      changes:
+        - addColumn:
+            tableName: user
+            columns:
+              name: about
+              type: varchar(400)
