@@ -4,7 +4,7 @@
 
     <insert id="createPost">
         insert into post(text, creator_id, wall_user_id, post_category_id, status)
-        values (#{request.text}, #{userId}, #{request.wallUserId}, #{request.categoryId}, 'created')
+        values (#{request.text}, #{userId}, #{request.wallUserId}, #{request.categoryId}, #{status})
     </insert>
 
     <select id="getPostById" resultMap="post">
@@ -15,12 +15,16 @@
                p.wall_user_id                                    as WALL_USER_ID,
                wu.name                                           as WALL_USER_NAME,
                c.id                                              as CATEGORY_ID,
-               c.text                                            as CATEGORY_NAME
+               c.text                                            as CATEGORY_NAME,
+            p.created_at as CREATED_AT
         from post p
                  join post_categories c on c.id = p.post_category_id
                  left join "user" wu on wu.id = p.wall_user_id
         where p.id = #{postId}
           and p.creator_id = #{userId}
+          and p.status = #{status}
+          and c.status = #{status}
+          and wu.status = #{status}
     </select>
 
     <resultMap id="post" type="com.uniso.equso.model.PostDto">
@@ -32,6 +36,7 @@
         <result column="WALL_USER_NAME" property="wallUser.name"/>
         <result column="CATEGORY_ID" property="category.id"/>
         <result column="CATEGORY_NAME" property="category.name"/>
+        <result column="CREATED_AT" property="createdAt"/>
     </resultMap>
 
     <select id="getPostsByCriteria" resultMap="post">
@@ -43,11 +48,15 @@
         p.wall_user_id as WALL_USER_ID,
         wu.name as WALL_USER_NAME,
         c.id as CATEGORY_ID,
-        c.text as CATEGORY_NAME
+        c.text as CATEGORY_NAME,
+        p.created_at as CREATED_AT
         from post p
         join post_categories c on c.id = p.post_category_id
         left join "user" wu on wu.id = p.wall_user_id
         where p.creator_id = #{userId}
+            and p.status = #{status}
+            and c.status = #{status}
+            and wu.status = #{status}
         <if test="!(criteria.text == null or criteria.text.isEmpty())">
             and p.text ilike '%'|| #{criteria.text} || '%'
         </if>

@@ -1,51 +1,38 @@
 package com.uniso.equso.dao.entities;
 
 import com.uniso.equso.dao.enums.Status;
-import com.uniso.equso.dao.enums.UserSubType;
-import com.uniso.equso.dao.enums.UserType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "comment")
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+@NoArgsConstructor
+@EqualsAndHashCode(of = {"id"})
+public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(value = EnumType.STRING)
-    private UserType type;
-
-    @Enumerated(value = EnumType.STRING)
-    private UserSubType subType;
-
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(nullable = false)
-    private String name;
+    private String text;
 
-    @Column(nullable = false)
-    private String surname;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
+    private UserEntity creator;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(unique = true)
-    private String alias;
-
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
-    private Boolean isAnonymous;
-
-    private String about;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private PostEntity post;
 
     @CreationTimestamp
     @Column(name = "created_at",updatable = false)
@@ -57,4 +44,5 @@ public class UserEntity {
 
     @Enumerated(value = EnumType.STRING)
     private Status status;
+
 }

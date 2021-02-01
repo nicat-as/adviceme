@@ -1,9 +1,31 @@
 package com.uniso.equso.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import com.uniso.equso.model.CommentCreateRequest;
+import com.uniso.equso.model.EditCommentRequest;
+import com.uniso.equso.service.CommentService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("${url.root}/comment")
+@RestController
+@RequestMapping("${url.root}/comment")
+@RequiredArgsConstructor
+@Slf4j
 public class CommentController {
-    // endpoint starts with comment
+    private final CommentService commentService;
+
+    @PostMapping
+    public ResponseEntity<Void> addComment(@RequestBody CommentCreateRequest request) {
+        commentService.createComment(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> editComment(@RequestBody EditCommentRequest comment){
+        commentService.updateComment(comment);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 
 }

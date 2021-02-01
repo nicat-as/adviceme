@@ -1,12 +1,7 @@
 package com.uniso.equso.service;
 
 
-import com.uniso.equso.model.CreatePostRequest;
-import com.uniso.equso.model.GetPostsRequest;
-import com.uniso.equso.model.GetPostsResponse;
-import com.uniso.equso.model.PostDto;
-
-import java.util.List;
+import com.uniso.equso.model.*;
 
 public interface PostService {
     void createPost(CreatePostRequest request);
@@ -14,4 +9,8 @@ public interface PostService {
     PostDto getPost(Long id);
 
     GetPostsResponse getPosts(GetPostsRequest request);
+
+    void deletePostById(Long postId);
+
+    PageResponse<Object> getComments(Long postId, Integer page, Integer size);
 }

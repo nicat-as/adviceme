@@ -7,6 +7,7 @@ import com.uniso.equso.model.JwtResponse;
 import com.uniso.equso.model.LoginRequest;
 import com.uniso.equso.service.AuthService;
 import com.uniso.equso.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("${url.root}")
 @Slf4j
+@RequiredArgsConstructor
 public class AuthController {
     public static final String SIGN_UP = "sign-up";
     public static final String LOGIN = "login";
@@ -30,10 +32,6 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
 
-    public AuthController(AuthService authService, UserService userService) {
-        this.authService = authService;
-        this.userService = userService;
-    }
 
     @PostMapping(LOGIN)
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
