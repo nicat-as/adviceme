@@ -15,7 +15,8 @@
                p.wall_user_id                                    as WALL_USER_ID,
                wu.name                                           as WALL_USER_NAME,
                c.id                                              as CATEGORY_ID,
-               c.text                                            as CATEGORY_NAME
+               c.text                                            as CATEGORY_NAME,
+            p.created_at as CREATED_AT
         from post p
                  join post_categories c on c.id = p.post_category_id
                  left join "user" wu on wu.id = p.wall_user_id
@@ -35,6 +36,7 @@
         <result column="WALL_USER_NAME" property="wallUser.name"/>
         <result column="CATEGORY_ID" property="category.id"/>
         <result column="CATEGORY_NAME" property="category.name"/>
+        <result column="CREATED_AT" property="createdAt"/>
     </resultMap>
 
     <select id="getPostsByCriteria" resultMap="post">
@@ -46,7 +48,8 @@
         p.wall_user_id as WALL_USER_ID,
         wu.name as WALL_USER_NAME,
         c.id as CATEGORY_ID,
-        c.text as CATEGORY_NAME
+        c.text as CATEGORY_NAME,
+        p.created_at as CREATED_AT
         from post p
         join post_categories c on c.id = p.post_category_id
         left join "user" wu on wu.id = p.wall_user_id
