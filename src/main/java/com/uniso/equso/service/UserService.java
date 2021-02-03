@@ -1,8 +1,8 @@
 package com.uniso.equso.service;
 
-import com.uniso.equso.model.CheckEmailResponse;
-import com.uniso.equso.model.CreateUserRequest;
-import com.uniso.equso.model.UserDto;
+import com.uniso.equso.model.auth.CheckEmailResponse;
+import com.uniso.equso.model.users.CreateUserRequest;
+import com.uniso.equso.model.users.UserDto;
 
 public interface UserService {
     void addUser(CreateUserRequest userRequest);

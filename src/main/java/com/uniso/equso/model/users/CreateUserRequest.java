@@ -1,4 +1,4 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.users;
 
 import com.uniso.equso.dao.enums.UserSubType;
 import com.uniso.equso.dao.enums.UserType;

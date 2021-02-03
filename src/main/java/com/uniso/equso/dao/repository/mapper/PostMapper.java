@@ -1,9 +1,9 @@
 package com.uniso.equso.dao.repository.mapper;
 
 import com.uniso.equso.dao.enums.Status;
-import com.uniso.equso.model.CreatePostRequest;
-import com.uniso.equso.model.GetPostsRequest;
-import com.uniso.equso.model.PostDto;
+import com.uniso.equso.model.posts.CreatePostRequest;
+import com.uniso.equso.model.posts.GetPostsRequest;
+import com.uniso.equso.model.posts.PostDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

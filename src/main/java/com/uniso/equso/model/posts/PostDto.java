@@ -1,12 +1,12 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.posts;
 
+import com.uniso.equso.model.users.UserInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
