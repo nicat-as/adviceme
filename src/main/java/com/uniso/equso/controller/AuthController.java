@@ -2,9 +2,9 @@ package com.uniso.equso.controller;
 
 import com.uniso.equso.config.security.SecurityConstant;
 import com.uniso.equso.exceptions.AuthenticationException;
-import com.uniso.equso.model.users.CreateUserRequest;
 import com.uniso.equso.model.auth.JwtResponse;
 import com.uniso.equso.model.auth.LoginRequest;
+import com.uniso.equso.model.users.CreateUserRequest;
 import com.uniso.equso.service.AuthService;
 import com.uniso.equso.service.UserService;
 import lombok.RequiredArgsConstructor;

@@ -6,7 +6,9 @@ import com.uniso.equso.dao.repository.PostEntityRepository;
 import com.uniso.equso.dao.repository.mapper.PostMapper;
 import com.uniso.equso.exceptions.AuthorizationException;
 import com.uniso.equso.exceptions.PostException;
-import com.uniso.equso.model.*;
+import com.uniso.equso.mapper.CommentMapper;
+import com.uniso.equso.model.PageResponse;
+import com.uniso.equso.model.posts.*;
 import com.uniso.equso.service.PostService;
 import com.uniso.equso.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static com.uniso.equso.dao.spec.PostEntitySpecification.*;
 
 @Service
 @RequiredArgsConstructor
@@ -83,45 +88,40 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PageResponse<Object> getComments(Long postId, Integer page, Integer size) {
-        log.info("ActionLog.getComments.started for post:{} | page:{} | size:{}",postId,page,size);
-        Pageable pageable = PageRequest.of(page-1, size, Sort.by("lastUpdatedAt").descending());
+        log.info("ActionLog.getComments.started for post:{} | page:{} | size:{}", postId, page, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("lastUpdatedAt").descending());
 
         var commentPage = commentEntityRepository
                 .findAllByPost_IdAndStatus(postId, Status.ACTIVE, pageable);
 
-        var response = commentPage.getContent()
-                .stream()
-                .map(c -> CommentResponseDto.builder()
-                        .id(c.getId())
-                        .text(c.getText())
-                        .creator(UserInfo.builder()
-                                .id(c.getCreator().getId())
-                                .name(checkAnonymous(c.getCreator().getName(),
-                                        c.getCreator().getAlias(),
-                                        true,
-                                        c.getCreator().getIsAnonymous())
-                                )
-                                .surname(checkAnonymous(c.getCreator().getSurname(),
-                                        c.getCreator().getAlias(),
-                                        false,
-                                        c.getCreator().getIsAnonymous())
-                                )
-                                .email(c.getCreator().getEmail())
-                                .userType(c.getCreator().getType())
-                                .subType(c.getCreator().getSubType())
-                                .build())
-                        .createdAt(c.getCreatedAt())
-                        .build())
-        .collect(Collectors.toList());
 
-        log.info("ActionLog.getComments.ended for post:{} | page:{} | size:{}",postId,page,size);
+        log.info("ActionLog.getComments.ended for post:{} | page:{} | size:{}", postId, page, size);
 
         return PageResponse.builder()
-                .data(response)
-                .currentPage(commentPage.getPageable().getPageNumber()+1)
+                .data(CommentMapper.INSTANCE.entityListToCommentResponseDtoList(commentPage.getContent()))
+                .currentPage(commentPage.getPageable().getPageNumber() + 1)
                 .totalPage(commentPage.getTotalPages())
                 .build();
     }
+
+    @Override
+    public List<SearchPostResponse> searchPostByCriteria(SearchPostRequest request) {
+        var spec = Specification.where(postContains(request.getPost())
+                .and(categoryNameContains(request.getCategoryName()))
+                .and(checkStatus(Status.ACTIVE))
+        );
+
+        var result = postEntityRepository.findAll(spec,
+                Sort.by(Sort.Direction.DESC, "lastUpdatedAt"));
+
+        List<SearchPostResponse> responses = new ArrayList<>();
+
+        result.forEach(postEntity -> responses.add(com.uniso.equso.mapper.PostMapper
+                .INSTANCE.entityToSearchPostResponse(postEntity)));
+
+        return responses;
+    }
+
 
     private Long getUserId() {
         return authenticationUtil.getUserDetail().getUserEntity().getId();
@@ -131,18 +131,6 @@ public class PostServiceImpl implements PostService {
         if (request.getWallUserId() == null) {
             request.setWallUserId(userId);
         }
-    }
-
-    private String checkAnonymous(String value, String alias, boolean isName, boolean isAnonymous){
-        String result=null;
-        if (isAnonymous){
-            if (isName){
-                result=alias;
-            }
-        }else {
-            result=value;
-        }
-        return result;
     }
 
 
