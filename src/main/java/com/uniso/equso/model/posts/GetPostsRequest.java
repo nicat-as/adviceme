@@ -1,5 +1,7 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.posts;
 
+import com.uniso.equso.model.Order;
+import com.uniso.equso.model.SortBy;
 import lombok.Data;
 
 @Data

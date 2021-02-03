@@ -1,6 +1,7 @@
 package com.uniso.equso.controller;
 
 import com.uniso.equso.model.*;
+import com.uniso.equso.model.posts.*;
 import com.uniso.equso.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,13 @@ public class PostController {
                                                                       @RequestParam("page") Integer page,
                                                                       @RequestParam("size") Integer size) {
         return ResponseEntity.ok(postService.getComments(postId, page, size));
+    }
+
+    @PostMapping("search")
+    public ResponseEntity<List<SearchPostResponse>> searchByCriteria(
+            @RequestBody SearchPostRequest request
+    ){
+        return ResponseEntity.ok(postService.searchPostByCriteria(request));
     }
 
 }

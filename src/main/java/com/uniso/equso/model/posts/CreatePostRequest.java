@@ -1,4 +1,4 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.posts;
 
 import lombok.Data;
 

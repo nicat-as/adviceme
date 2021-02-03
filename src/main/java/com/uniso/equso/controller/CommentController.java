@@ -1,7 +1,7 @@
 package com.uniso.equso.controller;
 
-import com.uniso.equso.model.CommentCreateRequest;
-import com.uniso.equso.model.EditCommentRequest;
+import com.uniso.equso.model.comments.CommentCreateRequest;
+import com.uniso.equso.model.comments.EditCommentRequest;
 import com.uniso.equso.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

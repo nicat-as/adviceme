@@ -1,4 +1,4 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.users;
 
 import com.uniso.equso.dao.enums.UserSubType;
 import com.uniso.equso.dao.enums.UserType;
@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -18,4 +20,5 @@ public class UserDto {
     private String about;
     private UserType type;
     private UserSubType subType;
+    private LocalDateTime createdAt;
 }

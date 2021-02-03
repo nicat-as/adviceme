@@ -1,7 +1,7 @@
 package com.uniso.equso.service;
 
-import com.uniso.equso.model.JwtResponse;
-import com.uniso.equso.model.LoginRequest;
+import com.uniso.equso.model.auth.JwtResponse;
+import com.uniso.equso.model.auth.LoginRequest;
 
 public interface AuthService {
     JwtResponse createAuthenticationToken(LoginRequest request);

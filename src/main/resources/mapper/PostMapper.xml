@@ -27,7 +27,7 @@
           and wu.status = #{status}
     </select>
 
-    <resultMap id="post" type="com.uniso.equso.model.PostDto">
+    <resultMap id="post" type="com.uniso.equso.model.posts.PostDto">
         <result column="ID" property="id"/>
         <result column="TEXT" property="text"/>
         <result column="CREATOR_ID" property="creator.id"/>

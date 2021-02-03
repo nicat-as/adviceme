@@ -1,4 +1,4 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.posts;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentCreateRequest {
-    private String text;
-    private Long postId;
+public class PostCategoryDto {
+    private Long id;
+    private String name;
 }

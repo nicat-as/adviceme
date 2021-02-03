@@ -1,17 +1,15 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.categories;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetPostsResponse {
-    private List<PostDto> posts;
-    private Boolean hasMore;
+public class CategoryDto {
+    private String text;
+    private Long id;
 }

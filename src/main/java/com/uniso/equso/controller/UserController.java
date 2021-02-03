@@ -1,7 +1,7 @@
 package com.uniso.equso.controller;
 
-import com.uniso.equso.model.CheckEmailResponse;
-import com.uniso.equso.model.UserDto;
+import com.uniso.equso.model.auth.CheckEmailResponse;
+import com.uniso.equso.model.users.UserDto;
 import com.uniso.equso.service.UserService;
 import com.uniso.equso.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
