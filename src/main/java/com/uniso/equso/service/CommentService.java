@@ -8,4 +8,6 @@ public interface CommentService {
     void createComment(CommentCreateRequest request);
 
     void updateComment(EditCommentRequest request);
+
+    void deleteComment(Long commentId);
 }
