@@ -11,10 +11,7 @@ import com.uniso.equso.exceptions.PostException;
 import com.uniso.equso.mapper.CommentMapper;
 import com.uniso.equso.mapper.PostMapper;
 import com.uniso.equso.model.PageResponse;
-import com.uniso.equso.model.posts.CreatePostRequest;
-import com.uniso.equso.model.posts.PostDto;
-import com.uniso.equso.model.posts.SearchPostRequest;
-import com.uniso.equso.model.posts.SearchPostResponse;
+import com.uniso.equso.model.posts.*;
 import com.uniso.equso.service.PostService;
 import com.uniso.equso.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
@@ -152,6 +149,27 @@ public class PostServiceImpl implements PostService {
 
         log.info("ActionLog.searchPostByCriteria.end");
         return pageResponse;
+    }
+
+    @Override
+    public PostDto editPost(EditPostRequest request) {
+        log.info("ActionLog.editPost.start for post:{}",request.getPostId());
+
+        var post = postEntityRepository.findByIdAndStatus(request.getPostId(), Status.ACTIVE)
+                .orElseThrow(() -> new PostException("exception.post-not-found"));
+
+        if (!post.getCreator().getId().equals(getUserId())) {
+            log.debug("User:{} has not authorized for edit post:{}",getUserId(),request.getPostId());
+            throw new AuthorizationException("exception.authorization.edit-post");
+        }
+
+        log.debug("Set new text to post");
+        post.setText(request.getText());
+
+        postEntityRepository.save(post);
+
+        log.info("ActionLog.editPost.end for post:{}", request.getPostId());
+        return null;
     }
 
 

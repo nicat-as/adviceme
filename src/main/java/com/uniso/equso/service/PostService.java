@@ -16,5 +16,6 @@ public interface PostService {
     PageResponse<Object> getComments(Long postId, Integer page, Integer size);
 
     PageResponse<List<SearchPostResponse>> searchPostByCriteria(SearchPostRequest request);
-    
+
+    PostDto editPost(EditPostRequest request);
 }
