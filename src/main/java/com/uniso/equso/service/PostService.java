@@ -11,12 +11,10 @@ public interface PostService {
 
     PostDto getPost(Long id);
 
-    GetPostsResponse getPosts(GetPostsRequest request);
-
     void deletePostById(Long postId);
 
     PageResponse<Object> getComments(Long postId, Integer page, Integer size);
 
-    List<SearchPostResponse> searchPostByCriteria(SearchPostRequest request);
+    PageResponse<List<SearchPostResponse>> searchPostByCriteria(SearchPostRequest request);
     
 }

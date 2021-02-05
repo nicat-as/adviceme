@@ -27,11 +27,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getPost(postId));
     }
 
-    @PostMapping("find")
-    public ResponseEntity<GetPostsResponse> getPosts(@RequestBody GetPostsRequest request) {
-        return ResponseEntity.ok(postService.getPosts(request));
-    }
-
     @DeleteMapping("{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.deletePostById(postId);
@@ -46,7 +41,7 @@ public class PostController {
     }
 
     @PostMapping("search")
-    public ResponseEntity<List<SearchPostResponse>> searchByCriteria(
+    public ResponseEntity<PageResponse<List<SearchPostResponse>>> searchByCriteria(
             @RequestBody SearchPostRequest request
     ){
         return ResponseEntity.ok(postService.searchPostByCriteria(request));

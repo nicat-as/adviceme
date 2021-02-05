@@ -22,7 +22,6 @@ public abstract class UserMapper {
     @Mapping(target = "status", expression = "java(getDefaultStatus())")
     public abstract UserEntity createUserToEntity(CreateUserRequest request);
 
-
     public abstract UserDto entityToUserDto(UserEntity entity);
 
     @BeforeMapping

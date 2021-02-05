@@ -1,14 +1,20 @@
 package com.uniso.equso.service.impl;
 
+import com.uniso.equso.dao.entities.CategoryEntity;
+import com.uniso.equso.dao.entities.PostEntity;
+import com.uniso.equso.dao.entities.UserEntity;
 import com.uniso.equso.dao.enums.Status;
 import com.uniso.equso.dao.repository.CommentEntityRepository;
 import com.uniso.equso.dao.repository.PostEntityRepository;
-import com.uniso.equso.dao.repository.mapper.PostMapper;
 import com.uniso.equso.exceptions.AuthorizationException;
 import com.uniso.equso.exceptions.PostException;
 import com.uniso.equso.mapper.CommentMapper;
+import com.uniso.equso.mapper.PostMapper;
 import com.uniso.equso.model.PageResponse;
-import com.uniso.equso.model.posts.*;
+import com.uniso.equso.model.posts.CreatePostRequest;
+import com.uniso.equso.model.posts.PostDto;
+import com.uniso.equso.model.posts.SearchPostRequest;
+import com.uniso.equso.model.posts.SearchPostResponse;
 import com.uniso.equso.service.PostService;
 import com.uniso.equso.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,43 +34,53 @@ import static com.uniso.equso.dao.spec.PostEntitySpecification.*;
 @RequiredArgsConstructor
 @Slf4j
 public class PostServiceImpl implements PostService {
-    private final PostMapper postMapper;
     private final AuthenticationUtil authenticationUtil;
     private final PostEntityRepository postEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
 
     @Override
     public void createPost(CreatePostRequest request) {
+        log.info("ActionLog.createPost.start");
+
         var userId = getUserId();
+
         validateAndFillWallUser(request, userId);
-        if (postMapper.createPost(getUserId(), request, Status.ACTIVE) <= 0) {
-            log.error("POST NOT CREATED");
-            throw new PostException("exception.post-not-created");
-        }
+
+        var wallUserId = request.getWallUserId() == null ? userId : request.getWallUserId();
+
+        var newPost = PostEntity.builder()
+                .text(request.getText())
+                .wallUser(UserEntity.builder().id(wallUserId).build())
+                .creator(UserEntity.builder().id(userId).build())
+                .category(CategoryEntity.builder().id(request.getCategoryId()).build())
+                .status(Status.ACTIVE)
+                .build();
+
+        postEntityRepository.save(newPost);
+
+        log.debug("Saved post for user: {}, post: {}", userId, newPost.getId());
+
+        log.info("ActionLog.createPost.end");
     }
 
     @Override
     public PostDto getPost(Long postId) {
-        return postMapper.getPostById(getUserId(), postId, Status.ACTIVE)
-                .orElseThrow(() -> new PostException("exception.post-not-found"));
-    }
+        log.info("ActionLog.getPost.start for post:{}", postId);
 
-    @Override
-    public GetPostsResponse getPosts(GetPostsRequest criteria) {
-        Integer maxCount = criteria.getMaxCount();
-        boolean isZero = maxCount == 0;
-        boolean hasMore = false;
-        criteria.setPage((criteria.getPage() - 1) * (isZero ? 10 : criteria.getMaxCount()));
-        criteria.setMaxCount(maxCount + 1);
-        List<PostDto> postDtoList = postMapper.getPostsByCriteria(getUserId(), criteria, isZero, Status.ACTIVE);
-        if (postDtoList.size() - 1 == maxCount && !isZero) {
-            hasMore = true;
-            postDtoList.remove(postDtoList.size() - 1);
-        }
-        return GetPostsResponse.builder()
-                .posts(postDtoList)
-                .hasMore(hasMore)
-                .build();
+        var offset = 0;
+        var limit = 10;
+
+        var post = postEntityRepository.getPostByIdAndStatus(postId,
+                Status.ACTIVE.name(),
+                limit,
+                offset
+        ).orElseThrow(() -> new PostException("exception.post-not-found"));
+
+        log.debug("Post: {}", post);
+
+        log.info("ActionLog.getPost.end for post:{}", postId);
+
+        return PostMapper.INSTANCE.entityPostDto(post);
     }
 
     @Override
@@ -105,21 +121,37 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<SearchPostResponse> searchPostByCriteria(SearchPostRequest request) {
+    public PageResponse<List<SearchPostResponse>> searchPostByCriteria(SearchPostRequest request) {
+        log.info("ActionLog.searchPostByCriteria.start");
+
+        log.debug("Creating search specification for request: {}", request);
+
         var spec = Specification.where(postContains(request.getPost())
                 .and(categoryNameContains(request.getCategoryName()))
+                .and(wallUserIdEqual(request.getWallUserId()))
+                .and(creatorIdEqual(request.getCreatorId()))
                 .and(checkStatus(Status.ACTIVE))
         );
 
-        var result = postEntityRepository.findAll(spec,
-                Sort.by(Sort.Direction.DESC, "lastUpdatedAt"));
+        Pageable pageable = PageRequest.of(request.getPage() - 1,
+                request.getPageSize(),
+                Sort.by("lastUpdatedAt").descending()
+        );
+
+        var result = postEntityRepository.findAll(spec, pageable);
 
         List<SearchPostResponse> responses = new ArrayList<>();
 
-        result.forEach(postEntity -> responses.add(com.uniso.equso.mapper.PostMapper
+        result.getContent().forEach(postEntity -> responses.add(com.uniso.equso.mapper.PostMapper
                 .INSTANCE.entityToSearchPostResponse(postEntity)));
 
-        return responses;
+        PageResponse<List<SearchPostResponse>> pageResponse = new PageResponse<>();
+        pageResponse.setData(responses);
+        pageResponse.setCurrentPage(result.getPageable().getPageNumber() + 1);
+        pageResponse.setTotalPage(result.getTotalPages());
+
+        log.info("ActionLog.searchPostByCriteria.end");
+        return pageResponse;
     }
 
 
