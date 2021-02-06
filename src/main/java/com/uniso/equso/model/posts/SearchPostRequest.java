@@ -12,4 +12,8 @@ import lombok.NoArgsConstructor;
 public class SearchPostRequest {
     private String post;
     private String categoryName;
+    private Long creatorId;
+    private Long wallUserId;
+    private Integer page = 1;
+    private Integer pageSize = 10;
 }

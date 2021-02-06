@@ -1,6 +1,7 @@
 package com.uniso.equso.mapper;
 
 import com.uniso.equso.dao.entities.PostEntity;
+import com.uniso.equso.model.posts.PostDto;
 import com.uniso.equso.model.posts.SearchPostResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,5 +18,11 @@ public abstract class PostMapper {
     @Mapping(target = "category",expression = "java(CategoryMapper.INSTANCE.entityToCategoryDto(postEntity.getCategory()))")
     @Mapping(target = "comments",expression = "java(CommentMapper.INSTANCE.entityListToCommentResponseDtoList(postEntity.getComments()))")
     public abstract SearchPostResponse entityToSearchPostResponse(PostEntity postEntity);
+
+    @Mapping(target = "wallUser",expression = "java(UserMapper.INSTANCE.entityToUserInfo(postEntity.getWallUser()))")
+    @Mapping(target = "creator",expression = "java(UserMapper.INSTANCE.entityToUserInfo(postEntity.getCreator()))")
+    @Mapping(target = "category",expression = "java(CategoryMapper.INSTANCE.entityToCategoryDto(postEntity.getCategory()))")
+    @Mapping(target = "comments",expression = "java(CommentMapper.INSTANCE.entityListToCommentResponseDtoList(postEntity.getComments()))")
+    public abstract PostDto entityPostDto(PostEntity postEntity);
 
 }

@@ -1,5 +1,6 @@
 package com.uniso.equso.model.users;
 
+import com.uniso.equso.annotation.StrongPassword;
 import com.uniso.equso.dao.enums.UserSubType;
 import com.uniso.equso.dao.enums.UserType;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Constraint;
 import javax.validation.constraints.*;
 
 @Data
@@ -24,9 +26,7 @@ public class CreateUserRequest {
     @Email
     private String email;
 
-    @NotNull
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$",
-            message = "{exception.password-not-standard}")
+    @StrongPassword
     private String password;
 
     @NotNull
