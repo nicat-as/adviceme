@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: equso
 
@@ -27,3 +29,8 @@ url:
 
 mybatis:
   mapper-locations: mapper/*.xml
+
+api:
+  info:
+    title: Equso api documentation
+    description: This api documentation used as a equso backend
