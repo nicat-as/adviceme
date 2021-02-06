@@ -1,7 +1,7 @@
 package com.uniso.equso.controller;
 
-import com.uniso.equso.model.CommentCreateRequest;
-import com.uniso.equso.model.EditCommentRequest;
+import com.uniso.equso.model.comments.CommentCreateRequest;
+import com.uniso.equso.model.comments.EditCommentRequest;
 import com.uniso.equso.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +25,14 @@ public class CommentController {
     @PutMapping
     public ResponseEntity<Void> editComment(@RequestBody EditCommentRequest comment){
         commentService.updateComment(comment);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("{commentId}")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Long commentId
+    ){
+        commentService.deleteComment(commentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

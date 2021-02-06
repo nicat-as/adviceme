@@ -1,4 +1,4 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.users;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.uniso.equso.dao.enums.UserSubType;

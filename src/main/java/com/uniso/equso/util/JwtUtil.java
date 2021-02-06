@@ -8,7 +8,7 @@ import com.uniso.equso.config.security.CustomUserDetails;
 import com.uniso.equso.config.security.CustomUserDetailsService;
 import com.uniso.equso.dao.entities.UserEntity;
 import com.uniso.equso.exceptions.AuthenticationException;
-import com.uniso.equso.model.JwtResponse;
+import com.uniso.equso.model.auth.JwtResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

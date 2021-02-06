@@ -1,4 +1,4 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.categories;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostCategoryDto {
+public class CategoryDto {
+    private String text;
     private Long id;
-    private String name;
 }

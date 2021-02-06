@@ -1,4 +1,4 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.comments;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

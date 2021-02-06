@@ -1,5 +1,6 @@
-package com.uniso.equso.model;
+package com.uniso.equso.model.comments;
 
+import com.uniso.equso.model.users.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
