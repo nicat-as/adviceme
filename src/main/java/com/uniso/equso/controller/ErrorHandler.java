@@ -64,12 +64,23 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public RestErrorResponse<?> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+        Map<String, List<String>> errors = new HashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            if (error instanceof FieldError) {
+                String fieldName = ((FieldError) error).getField();
+                String errorMessage = error.getDefaultMessage();
+
+                if (errors.containsKey(fieldName)) {
+                    errors.get(fieldName).add(errorMessage);
+                } else {
+                    List<String> list = new ArrayList<>();
+                    list.add(errorMessage);
+                    errors.put(fieldName, list);
+                }
+            }
         });
+
         return RestErrorResponse.builder()
                 .uuid(UUID.randomUUID().toString())
                 .code("exception.validation-failed")
@@ -82,9 +93,20 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public RestErrorResponse<?> handleValidationExceptions(ConstraintViolationException ex) {
-        Set<String> errors = new HashSet<>();
+        Map<String, List<String>> errors = new HashMap<>();
+
         ex.getConstraintViolations()
-                .forEach(constraintViolation -> errors.add(constraintViolation.getMessage()));
+                .forEach(constraintViolation -> {
+                    var key = constraintViolation.getPropertyPath().toString();
+                    if (errors.containsKey(key)) {
+                        errors.get(key).add(constraintViolation.getMessage());
+                    } else {
+                        List<String> list = new ArrayList<>();
+                        list.add(constraintViolation.getMessage());
+                        errors.put(key, list);
+                    }
+
+                });
         return RestErrorResponse.builder()
                 .uuid(UUID.randomUUID().toString())
                 .code("exception.validation-failed")
