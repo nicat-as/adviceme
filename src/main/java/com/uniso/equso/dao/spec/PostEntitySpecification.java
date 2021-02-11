@@ -71,8 +71,13 @@ public final class PostEntitySpecification {
 
 
     public static Specification<PostEntity> excludeCategories(List<Long> excludedCategories) {
-        return (root, query, builder) ->
-                builder.not(root.get(CATEGORY).in(excludedCategories));
+        return (root, query, builder) -> {
+            if (excludedCategories != null) {
+                return builder.not(root.get(CATEGORY).in(excludedCategories));
+            } else {
+                return builder.conjunction();
+            }
+        };
     }
 
     private static String contains(String expression) {
