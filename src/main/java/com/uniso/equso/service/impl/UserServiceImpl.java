@@ -9,6 +9,7 @@ import com.uniso.equso.model.users.CreateUserRequest;
 import com.uniso.equso.model.users.UserDto;
 import com.uniso.equso.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @PreAuthorize("@permissionUtil.isSubType(#userRequest.getType(),#userRequest.getSubType())")
     @Override
     public void addUser(CreateUserRequest userRequest) {
         log.info("ActionLog.addUser.started - user:{}", userRequest.getEmail());
