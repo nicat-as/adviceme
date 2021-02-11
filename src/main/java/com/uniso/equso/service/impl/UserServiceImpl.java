@@ -9,6 +9,7 @@ import com.uniso.equso.model.users.CreateUserRequest;
 import com.uniso.equso.model.users.UserDto;
 import com.uniso.equso.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +33,14 @@ public class UserServiceImpl implements UserService {
             throw new AuthenticationException("exception.email-is-not-valid");
         }
 
+        userRequest.setPassword(new BCryptPasswordEncoder().encode(userRequest.getPassword()));
+
         var userEntity = UserMapper.INSTANCE.createUserToEntity(userRequest);
 
-        log.debug("save new user");
+        log.debug("save new user:{}",userEntity);
+
         userEntityRepository.save(userEntity);
+
         log.info("ActionLog.addUser.ended");
     }
 
