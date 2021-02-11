@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -16,4 +18,5 @@ public class SearchPostRequest {
     private Long wallUserId;
     private Integer page = 1;
     private Integer pageSize = 10;
+    private List<Long> excludedCategories;
 }

@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import java.text.MessageFormat;
+import java.util.List;
 
 public final class PostEntitySpecification {
     private static final String TEXT = "text";
@@ -66,6 +67,12 @@ public final class PostEntitySpecification {
 
     public static Specification<PostEntity> checkStatus(Status status) {
         return (root, query, builder) -> builder.equal(root.get(STATUS), status);
+    }
+
+
+    public static Specification<PostEntity> excludeCategories(List<Long> excludedCategories) {
+        return (root, query, builder) ->
+                builder.not(root.get(CATEGORY).in(excludedCategories));
     }
 
     private static String contains(String expression) {

@@ -126,6 +126,7 @@ public class PostServiceImpl implements PostService {
         var spec = Specification.where(postContains(request.getPost())
                 .and(categoryNameContains(request.getCategoryName()))
                 .and(wallUserIdEqual(request.getWallUserId()))
+                .and(excludeCategories(request.getExcludedCategories()))
                 .and(creatorIdEqual(request.getCreatorId()))
                 .and(checkStatus(Status.ACTIVE))
         );
