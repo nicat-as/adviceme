@@ -5,6 +5,7 @@ import com.uniso.equso.exceptions.AuthenticationException;
 import com.uniso.equso.model.auth.JwtResponse;
 import com.uniso.equso.model.auth.LoginRequest;
 import com.uniso.equso.model.users.CreateUserRequest;
+import com.uniso.equso.model.users.UserDto;
 import com.uniso.equso.service.AuthService;
 import com.uniso.equso.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +41,9 @@ public class AuthController {
     }
 
     @PostMapping(SIGN_UP)
-    public ResponseEntity<Void> createUser(@Valid @RequestBody CreateUserRequest request) {
-        log.info("ActionLog.createUser.started");
-        userService.addUser(request);
-        log.info("ActionLog.createUser.ended");
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody CreateUserRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.addUser(request));
     }
 
     @PostMapping(LOGOUT)

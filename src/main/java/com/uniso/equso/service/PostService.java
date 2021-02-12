@@ -5,9 +5,10 @@ import com.uniso.equso.model.*;
 import com.uniso.equso.model.posts.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PostService {
-    void createPost(CreatePostRequest request);
+    Map<String,Long> createPost(CreatePostRequest request);
 
     PostDto getPost(Long id);
 

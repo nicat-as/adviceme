@@ -19,16 +19,14 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserEntityRepository userEntityRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserEntityRepository userEntityRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserEntityRepository userEntityRepository) {
         this.userEntityRepository = userEntityRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @PreAuthorize("@permissionUtil.isSubType(#userRequest.getType(),#userRequest.getSubType())")
     @Override
-    public void addUser(CreateUserRequest userRequest) {
+    public UserDto addUser(CreateUserRequest userRequest) {
         log.info("ActionLog.addUser.started - user:{}", userRequest.getEmail());
 
         if (!isValidEmail(userRequest.getEmail()).getIsValid()) {
@@ -44,6 +42,8 @@ public class UserServiceImpl implements UserService {
         userEntityRepository.save(userEntity);
 
         log.info("ActionLog.addUser.ended");
+
+        return UserMapper.INSTANCE.entityToUserDto(userEntity);
     }
 
     @Override
