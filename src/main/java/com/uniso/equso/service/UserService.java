@@ -5,7 +5,7 @@ import com.uniso.equso.model.users.CreateUserRequest;
 import com.uniso.equso.model.users.UserDto;
 
 public interface UserService {
-    void addUser(CreateUserRequest userRequest);
+    UserDto addUser(CreateUserRequest userRequest);
 
     UserDto getUserById(Long userId);
 

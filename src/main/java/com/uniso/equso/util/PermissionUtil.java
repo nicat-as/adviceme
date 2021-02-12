@@ -32,7 +32,7 @@ public class PermissionUtil {
         ));
     }
 
-    public void isSubType(UserType type, UserSubType subType) {
+    public boolean isSubType(UserType type, UserSubType subType) {
         log.info("ActionLog.isSubType.start - {} {}", type, subType);
         if (!typePolicy.get(type).contains(subType)) {
             log.error("ActionLog.isSubType.error - not permitted for selecting type: {} {}",type,subType);
@@ -40,6 +40,7 @@ public class PermissionUtil {
                     "You're not permitted for selecting this type");
         }
         log.info("ActionLog.isSubType.end - {} {}", type, subType);
+        return true;
     }
 
 }
