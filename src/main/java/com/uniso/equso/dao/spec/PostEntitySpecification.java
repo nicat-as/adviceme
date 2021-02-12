@@ -5,9 +5,7 @@ import com.uniso.equso.dao.enums.Status;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -72,7 +70,7 @@ public final class PostEntitySpecification {
 
     public static Specification<PostEntity> excludeCategories(List<Long> excludedCategories) {
         return (root, query, builder) -> {
-            if (excludedCategories != null) {
+            if (excludedCategories != null && !excludedCategories.isEmpty()) {
                 return builder.not(root.get(CATEGORY).in(excludedCategories));
             } else {
                 return builder.conjunction();

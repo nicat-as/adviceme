@@ -24,8 +24,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.uniso.equso.dao.spec.PostEntitySpecification.*;
+import static com.uniso.equso.util.CommonConstants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class PostServiceImpl implements PostService {
     private final CommentEntityRepository commentEntityRepository;
 
     @Override
-    public void createPost(CreatePostRequest request) {
+    public Map<String,Long> createPost(CreatePostRequest request) {
         log.info("ActionLog.createPost.start");
 
         var userId = getUserId();
@@ -58,6 +60,7 @@ public class PostServiceImpl implements PostService {
         log.debug("Saved post for user: {}, post: {}", userId, newPost.getId());
 
         log.info("ActionLog.createPost.end");
+        return Map.of(ID,newPost.getId());
     }
 
     @Override

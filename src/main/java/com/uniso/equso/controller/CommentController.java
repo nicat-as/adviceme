@@ -17,13 +17,13 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<Void> addComment(@RequestBody CommentCreateRequest request) {
-        commentService.createComment(request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> addComment(@RequestBody CommentCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(commentService.createComment(request));
     }
 
     @PutMapping
-    public ResponseEntity<Void> editComment(@RequestBody EditCommentRequest comment){
+    public ResponseEntity<Void> editComment(@RequestBody EditCommentRequest comment) {
         commentService.updateComment(comment);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -31,7 +31,7 @@ public class CommentController {
     @DeleteMapping("{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId
-    ){
+    ) {
         commentService.deleteComment(commentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -12,9 +12,14 @@ import com.uniso.equso.model.comments.CommentCreateRequest;
 import com.uniso.equso.model.comments.EditCommentRequest;
 import com.uniso.equso.service.CommentService;
 import com.uniso.equso.util.AuthenticationUtil;
+import com.uniso.equso.util.CommonConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+
+import static com.uniso.equso.util.CommonConstants.ID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public void createComment(CommentCreateRequest request) {
+    public Map<String,Long> createComment(CommentCreateRequest request) {
         log.info("ActionLog.createComment.started for postId:{}", request.getPostId());
         var post = postEntityRepository.findById(request.getPostId())
                 .orElseThrow(() -> {
@@ -46,7 +51,8 @@ public class CommentServiceImpl implements CommentService {
 
         commentEntityRepository.save(comment);
 
-        log.info("ActionLog.createComment.started");
+        log.info("ActionLog.createComment.ended");
+        return Map.of(ID,comment.getId());
     }
 
     @Override
