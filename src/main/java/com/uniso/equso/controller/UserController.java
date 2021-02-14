@@ -1,5 +1,6 @@
 package com.uniso.equso.controller;
 
+import com.uniso.equso.model.Wrapper;
 import com.uniso.equso.model.auth.CheckEmailResponse;
 import com.uniso.equso.model.users.UserDto;
 import com.uniso.equso.service.UserService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Email;
+import java.util.List;
 
 @RestController
 @RequestMapping("${url.root}/user")
@@ -34,6 +36,14 @@ public class UserController {
     @GetMapping("email")
     public ResponseEntity<CheckEmailResponse> checkEmail(@RequestParam("q") @Email String query) {
         return ResponseEntity.ok(userService.isValidEmail(query));
+    }
+
+    @GetMapping("specialist")
+    public ResponseEntity<Wrapper<List<UserDto>>> getSpecialistUsers(
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @RequestParam(value = "page", defaultValue = "1") Integer page
+    ) {
+        return ResponseEntity.ok(new Wrapper(userService.getSpecialistUsers(page, size)));
     }
 
 

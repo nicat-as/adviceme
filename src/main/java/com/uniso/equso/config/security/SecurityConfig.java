@@ -20,6 +20,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 import static com.uniso.equso.controller.AuthController.LOGIN;
 import static com.uniso.equso.controller.AuthController.SIGN_UP;
 
@@ -57,7 +59,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and()
+        http.cors().configurationSource(corsConfigurationSource())
+                .and()
                 .csrf().disable()
                 .logout().disable()
                 .formLogin().disable()
@@ -85,5 +88,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("*"));
+        config.setAllowedHeaders(List.of("Content-Type","Accept","X-Requested-With","remember-me"));
+        config.setAllowCredentials(true);
+        config.setAllowedMethods(List.of("POST","GET","PUT","DELETE","OPTIONS"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**",config);
+        return source;
     }
 }

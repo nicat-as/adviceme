@@ -1,5 +1,7 @@
 package com.uniso.equso.service.impl;
 
+import com.uniso.equso.dao.enums.Status;
+import com.uniso.equso.dao.enums.UserType;
 import com.uniso.equso.dao.repository.UserEntityRepository;
 import com.uniso.equso.exceptions.AuthenticationException;
 import com.uniso.equso.exceptions.UserException;
@@ -9,10 +11,13 @@ import com.uniso.equso.model.users.CreateUserRequest;
 import com.uniso.equso.model.users.UserDto;
 import com.uniso.equso.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -37,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
         var userEntity = UserMapper.INSTANCE.createUserToEntity(userRequest);
 
-        log.debug("save new user:{}",userEntity);
+        log.debug("save new user:{}", userEntity);
 
         userEntityRepository.save(userEntity);
 
@@ -66,6 +71,17 @@ public class UserServiceImpl implements UserService {
         return CheckEmailResponse.builder()
                 .isValid(!isExist)
                 .build();
+    }
+
+    @Override
+    public List<UserDto> getSpecialistUsers(Integer page, Integer size) {
+        var specialistUsers = userEntityRepository
+                .findAllByTypeAndStatus(UserType.SPECIALIST, Status.ACTIVE,
+                        PageRequest.of(page - 1, size));
+
+        return specialistUsers.stream()
+                .map(UserMapper.INSTANCE::entityToUserDto)
+                .collect(Collectors.toList());
     }
 
 }
