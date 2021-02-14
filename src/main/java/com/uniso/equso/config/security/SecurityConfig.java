@@ -81,13 +81,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(customUserDetailsService).passwordEncoder(getEncoder());
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-        return source;
-    }
-
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
