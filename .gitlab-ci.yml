@@ -10,7 +10,7 @@ before_script:
 build:
   only:
     - develop
-    - master
+#    - master
   stage: build
   script: ./gradlew clean build
   artifacts:
