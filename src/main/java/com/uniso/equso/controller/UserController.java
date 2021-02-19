@@ -2,6 +2,7 @@ package com.uniso.equso.controller;
 
 import com.uniso.equso.model.Wrapper;
 import com.uniso.equso.model.auth.CheckEmailResponse;
+import com.uniso.equso.model.users.UpdateUserRequest;
 import com.uniso.equso.model.users.UserDto;
 import com.uniso.equso.service.UserService;
 import com.uniso.equso.util.AuthenticationUtil;
@@ -9,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Email;
 import java.util.List;
@@ -46,5 +44,11 @@ public class UserController {
         return ResponseEntity.ok(new Wrapper(userService.getSpecialistUsers(page, size)));
     }
 
+    @PutMapping("profile")
+    public ResponseEntity<UserDto> updateProfile(
+            @RequestBody UpdateUserRequest request
+    ) {
+        return ResponseEntity.ok(userService.updateProfile(request));
+    }
 
 }
