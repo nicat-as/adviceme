@@ -1,6 +1,7 @@
 package com.uniso.equso.service;
 
 import com.uniso.equso.model.auth.CheckEmailResponse;
+import com.uniso.equso.model.users.ChangePasswordRequest;
 import com.uniso.equso.model.users.CreateUserRequest;
 import com.uniso.equso.model.users.UpdateUserRequest;
 import com.uniso.equso.model.users.UserDto;
@@ -17,4 +18,6 @@ public interface UserService {
     List<UserDto> getSpecialistUsers(Integer page, Integer size);
 
     UserDto updateProfile(UpdateUserRequest request);
+
+    UserDto changePassword(ChangePasswordRequest request);
 }

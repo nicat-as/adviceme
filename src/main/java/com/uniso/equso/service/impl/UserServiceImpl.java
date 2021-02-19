@@ -7,6 +7,7 @@ import com.uniso.equso.exceptions.AuthenticationException;
 import com.uniso.equso.exceptions.UserException;
 import com.uniso.equso.mapper.UserMapper;
 import com.uniso.equso.model.auth.CheckEmailResponse;
+import com.uniso.equso.model.users.ChangePasswordRequest;
 import com.uniso.equso.model.users.CreateUserRequest;
 import com.uniso.equso.model.users.UpdateUserRequest;
 import com.uniso.equso.model.users.UserDto;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserEntityRepository userEntityRepository;
     private final AuthenticationUtil authenticationUtil;
     private final PermissionUtil permissionUtil;
+    private final PasswordEncoder passwordEncoder;
 
 
     @PreAuthorize("@permissionUtil.isSubType(#userRequest.getType(),#userRequest.getSubType())")
@@ -118,6 +121,25 @@ public class UserServiceImpl implements UserService {
         log.info("ActionLog.updateProfile.end - userId:{}", authenticationUtil.getUserId());
         return UserMapper.INSTANCE.entityToUserDto(userEntityRepository.save(user));
 
+    }
+
+    @Override
+    public UserDto changePassword(ChangePasswordRequest request) {
+        log.info("ActionLog.changePassword.start - userId:{}", authenticationUtil.getUserId());
+        var user = userEntityRepository.findByIdAndStatus(authenticationUtil.getUserId(), Status.ACTIVE)
+                .orElseThrow(() -> new UserException("exception.user-not-found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            log.error("ActionLog.changePassword.error - current password is wrong");
+            throw new AuthenticationException("exception.authentication.user-bad-credentials", "Password is incorrect");
+        }
+
+        log.debug("Update password");
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        log.info("ActionLog.changePassword.end - userId:{}", authenticationUtil.getUserId());
+
+        return UserMapper.INSTANCE.entityToUserDto(userEntityRepository.save(user));
     }
 
 }
