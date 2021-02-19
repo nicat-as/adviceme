@@ -28,7 +28,8 @@ public class PermissionUtil {
         typePolicy.put(USER, List.of(DEFAULT));
         typePolicy.put(SPECIALIST, List.of(
                 PSYCHOLOGIST,
-                DOCTOR
+                DOCTOR,
+                LAWYER
         ));
     }
 
