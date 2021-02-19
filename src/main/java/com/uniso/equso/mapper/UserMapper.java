@@ -3,15 +3,14 @@ package com.uniso.equso.mapper;
 import com.uniso.equso.dao.entities.UserEntity;
 import com.uniso.equso.dao.enums.Status;
 import com.uniso.equso.model.users.CreateUserRequest;
+import com.uniso.equso.model.users.UpdateUserRequest;
 import com.uniso.equso.model.users.UserDto;
 import com.uniso.equso.model.users.UserInfo;
-import org.mapstruct.BeforeMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class UserMapper {
     public static final UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
@@ -53,4 +52,8 @@ public abstract class UserMapper {
     protected Status getDefaultStatus() {
         return Status.ACTIVE;
     }
+
+
+    public abstract UserEntity updateEntity(UpdateUserRequest updateUser,
+                                            @MappingTarget UserEntity entity);
 }
