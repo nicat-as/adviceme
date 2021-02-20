@@ -1,5 +1,6 @@
 package com.uniso.equso.mapper;
 
+import com.uniso.equso.config.security.CustomUserDetails;
 import com.uniso.equso.dao.entities.UserEntity;
 import com.uniso.equso.dao.enums.Status;
 import com.uniso.equso.model.users.CreateUserRequest;
@@ -8,6 +9,9 @@ import com.uniso.equso.model.users.UserDto;
 import com.uniso.equso.model.users.UserInfo;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Objects;
 
 @Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -34,7 +38,13 @@ public abstract class UserMapper {
     }
 
     protected void makeAnonymous(UserEntity userEntity) {
-        if (userEntity.getIsAnonymous()) {
+        Long id = null;
+        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ( principal instanceof CustomUserDetails){
+            id = ((CustomUserDetails)principal).getUserEntity().getId();
+        }
+
+        if (userEntity.getIsAnonymous() && !Objects.equals(id, userEntity.getId())) {
             userEntity.setName(userEntity.getAlias());
             userEntity.setSurname(null);
             userEntity.setEmail(null);
