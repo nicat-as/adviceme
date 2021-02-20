@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.uniso.equso.dao.spec.PostEntitySpecification.*;
-import static com.uniso.equso.util.CommonConstants.*;
+import static com.uniso.equso.util.CommonConstants.ID;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +38,7 @@ public class PostServiceImpl implements PostService {
     private final CommentEntityRepository commentEntityRepository;
 
     @Override
-    public Map<String,Long> createPost(CreatePostRequest request) {
+    public Map<String, Long> createPost(CreatePostRequest request) {
         log.info("ActionLog.createPost.start");
 
         var userId = getUserId();
@@ -60,7 +60,7 @@ public class PostServiceImpl implements PostService {
         log.debug("Saved post for user: {}, post: {}", userId, newPost.getId());
 
         log.info("ActionLog.createPost.end");
-        return Map.of(ID,newPost.getId());
+        return Map.of(ID, newPost.getId());
     }
 
     @Override
@@ -91,9 +91,12 @@ public class PostServiceImpl implements PostService {
                     log.error("exception.post-not-found");
                     throw new PostException("exception.post-not-found");
                 });
+        var creatorId = post.getCreator().getId();
+        var wallUserId = post.getWallUser().getId();
+        log.debug("Creator:{} posted to user wall:{}", creatorId, wallUserId);
 
-        if (!post.getCreator().getId().equals(getUserId())) {
-            log.error("Delete post in not authorized for user: {}", post.getCreator().getId());
+        if (!(creatorId.equals(getUserId()) || wallUserId.equals(getUserId()))) {
+            log.error("Delete post is not authorized for creator: {} or wall user:{}", creatorId, wallUserId);
             throw new AuthorizationException("exception.authorization.delete-post");
         }
         post.setStatus(Status.DEACTIVE);
@@ -157,13 +160,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto editPost(EditPostRequest request) {
-        log.info("ActionLog.editPost.start for post:{}",request.getPostId());
+        log.info("ActionLog.editPost.start for post:{}", request.getPostId());
 
         var post = postEntityRepository.findByIdAndStatus(request.getPostId(), Status.ACTIVE)
                 .orElseThrow(() -> new PostException("exception.post-not-found"));
 
         if (!post.getCreator().getId().equals(getUserId())) {
-            log.debug("User:{} has not authorized for edit post:{}",getUserId(),request.getPostId());
+            log.debug("User:{} has not authorized for edit post:{}", getUserId(), request.getPostId());
             throw new AuthorizationException("exception.authorization.edit-post");
         }
 
